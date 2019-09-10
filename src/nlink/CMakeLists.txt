@@ -70,6 +70,7 @@ add_executable(tofsense_publisher
 
     src/NLink/TOFSense/ncommon.cpp
     src/NLink/TOFSense/nframe0.cpp
+    src/NLink/TOFSense/nreadframe0.cpp
 
     src/TOFSense/init.cpp
     src/TOFSense/publisher.cpp
@@ -129,6 +130,7 @@ add_message_files(
     node2_t.msg
     node_frame2.msg
     tofsense_frame0.msg
+    tofsense_cascade.msg
     )
 
 ## Generate services in the 'srv' folder

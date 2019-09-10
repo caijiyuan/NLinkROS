@@ -1,37 +1,77 @@
 #include "init.h"
-#include "../NLink/TOFSense/nframe0.h"
+
+#include "../NLink/TOFSense/nreadframe0.h"
 #include "../NProtocol/ncommon.h"
 #include "../NProtocol/nframeextraction.h"
-#include <nlink/tofsense_frame0.h>
 
 namespace TOFSense {
 
-Init::Init(NFrameExtraction *frameExtraction) {
+Init::Init(NFrameExtraction *frameExtraction, serial::Serial *serial)
+    : serial_(serial) {
   initFrame0(frameExtraction);
 
   //  test(frameExtraction);
 }
 
 void Init::initFrame0(NFrameExtraction *frameExtraction) {
-  auto protocol = new NFrame0;
-  frameExtraction->appendProtocol(protocol);
-  protocol->setDataHandle([=] {
-    if (!publishers_[protocol]) {
+  protocolFrame0_ = new NFrame0;
+  frameExtraction->appendProtocol(protocolFrame0_);
+  protocolFrame0_->setDataHandle([=] {
+    if (!publishers_[protocolFrame0_]) {
       ros::NodeHandle nodeHandle;
-      publishers_[protocol] = nodeHandle.advertise<nlink::tofsense_frame0>(
-          "nlink_tofsense_frame0", 50);
+      if (isInquireMode_) {
+        publishers_[protocolFrame0_] =
+            nodeHandle.advertise<nlink::tofsense_cascade>(
+                "nlink_tofsense_cascade", 50);
+      } else {
+        publishers_[protocolFrame0_] =
+            nodeHandle.advertise<nlink::tofsense_frame0>(
+                "nlink_tofsense_frame0", 50);
+      }
     }
-    auto data = protocol->data();
-    nlink::tofsense_frame0 msgData;
+    auto data = protocolFrame0_->data();
+    nlink::tofsense_frame0 frame0MsgData;
 
-    msgData.id = data.id;
-    msgData.systemTime = data.systemTime;
-    msgData.distance = data.distance();
-    msgData.distanceStatus = data.distanceStatus;
-    msgData.signalStrength = data.signalStrength;
+    frame0MsgData.id = data.id;
+    frame0MsgData.systemTime = data.systemTime;
+    frame0MsgData.distance = data.distance();
+    frame0MsgData.distanceStatus = data.distanceStatus;
+    frame0MsgData.signalStrength = data.signalStrength;
 
-    publishers_.at(protocol).publish(msgData);
+    if (isInquireMode_) {
+      frame0Map_[data.id] = frame0MsgData;
+
+    } else {
+      publishers_.at(protocolFrame0_).publish(frame0MsgData);
+    }
   });
+
+  if (isInquireMode_) {
+
+    timerScan_ = nh.createTimer(ros::Duration(1.0 / frequency_),
+                                [=](const ros::TimerEvent &) {
+                                  frame0Map_.clear();
+                                  nodesReaded_ = 0;
+                                  timerRead_.start();
+                                },
+                                false, true);
+    timerRead_ =
+        nh.createTimer(ros::Duration(0.006),
+                       [=](const ros::TimerEvent &) {
+                         if (nodesReaded_ >= nodesCount_) {
+                           nlink::tofsense_cascade msgCascade;
+                           for (const auto &msg : frame0Map_) {
+                             msgCascade.nodes.push_back(msg.second);
+                           }
+                           publishers_.at(protocolFrame0_).publish(msgCascade);
+                           timerRead_.stop();
+                         } else {
+                           serial_->write(TOFSense::commandRead(nodesReaded_));
+                           ++nodesReaded_;
+                         }
+                       },
+                       false, false);
+  }
 }
 
 void Init::test(NFrameExtraction *frameExtraction) {
