@@ -18,18 +18,20 @@ Build:
 
 ```
 catkin_make
+
+source devel/setup.bash
 ```
 
 Run(For LinkTrack):
 
 ```
-./build/nlink/linktrack_publisher /dev/ttyUSB0 921600
+rosrun nlink linktrack_publisher /dev/ttyUSB0 921600
 ```
 
 Run(For TOFSense):
 
 ```
-./build/nlink/tofsense_publisher /dev/ttyUSB0 921600
+rosrun nlink tofsense_publisher /dev/ttyUSB0 921600
 ```
 
 Notice: please use port name and baud rate of your device instead.

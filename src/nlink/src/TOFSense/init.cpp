@@ -57,7 +57,7 @@ void Init::initFrame0(NFrameExtraction *frameExtraction) {
                                 false, true);
     timerRead_ =
         nh.createTimer(ros::Duration(0.006),
-                       [=](const ros::TimerEvent &) {
+                       [=](const ros::TimerEvent &event) {
                          if (nodesReaded_ >= nodesCount_) {
                            nlink::tofsense_cascade msgCascade;
                            for (const auto &msg : frame0Map_) {
