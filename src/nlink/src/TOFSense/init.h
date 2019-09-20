@@ -3,7 +3,7 @@
 
 #include "../NLink/TOFSense/nframe0.h"
 #include "../NProtocol/nprotocolbase.h"
-#include "serial/serial.h"
+#include "../serial/serial.h"
 #include <map>
 #include <nlink/tofsense_cascade.h>
 #include <nlink/tofsense_frame0.h>

@@ -1,6 +1,6 @@
-﻿#ifndef INITSERIAL_H
+#ifndef INITSERIAL_H
 #define INITSERIAL_H
-#include "serial/serial.h"
+#include "serial.h"
 
 void initSerial(int argc, char **argv, serial::Serial *serial);
 
