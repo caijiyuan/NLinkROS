@@ -33,9 +33,9 @@ private:
   serial::Serial *serial_;
 
   /** 根据实际情况自行配置参数 **/
-  const int frequency_ = 10;        //查询频率,最大10Hz
-  const size_t nodesCount_ = 8;     //级联节点数
-  const bool isInquireMode_ = true; //主动查询模式
+  const int frequency_ = 10;         //查询频率,最大10Hz
+  const size_t nodesCount_ = 8;      //级联节点数
+  const bool isInquireMode_ = false; //主动查询模式
   /** 根据实际情况自行配置参数 **/
 
   ros::NodeHandle nh;

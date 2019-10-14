@@ -3,7 +3,8 @@
 
 #include "nprotocolitembase.h"
 #include <algorithm>
-#include <string.h>
+#include <cstring>
+#include <numeric>
 #include <string>
 
 class NConstantByteArrayItem : public NProtocolItemBase {

@@ -4,7 +4,9 @@
 #include <algorithm>
 #include <cassert>
 #include <cstdint>
-#include <string.h>
+#include <cstring>
+#include <numeric>
+#include <string>
 
 extern const bool kIsLittleEndianFormat;
 
