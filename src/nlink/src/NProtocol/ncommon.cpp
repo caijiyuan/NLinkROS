@@ -1,6 +1,4 @@
 ﻿#include "ncommon.h"
-#include <array>
-#include <vector>
 
 namespace NCommon {
 

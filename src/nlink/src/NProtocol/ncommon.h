@@ -1,7 +1,11 @@
 ﻿#ifndef NPROTOCOLNCOMMON_H
 #define NPROTOCOLNCOMMON_H
 
+#include <array>
+#include <numeric>
 #include <string>
+#include <vector>
+
 namespace NCommon {
 
 // QString HexToString(const QByteArray &data, char separator = ' ');
